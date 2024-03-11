@@ -63,7 +63,7 @@ const TimeLine = ({ activeStatus }) => {
     <div>
       <Navbar />
       <button
-        className="mt-[80px] bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded"
+        className="mt-[70px] bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded"
         onClick={() => window.history.back()}
       >
         Go Back

@@ -63,7 +63,7 @@ function Form() {
           setResponseData(jsonResponse);
           setError("");
           navigate("/orderdetail", {
-            replace: true,
+            replace: false,
             state: { data: jsonResponse.data },
           });
         } else {

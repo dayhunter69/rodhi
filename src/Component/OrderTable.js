@@ -9,7 +9,7 @@ function OrderTable() {
 
   const handleViewMore = (item) => {
     navigate("/status", {
-      replace: true,
+      replace: false,
       state: { data: item },
     });
   };
@@ -40,7 +40,7 @@ function OrderTable() {
     <div className="w-full mt-[80px]">
       <Navbar />
       <button
-        className="mt-[80px] bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded"
+        className="mt-[10px] bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded"
         onClick={() => window.history.back()}
       >
         Go Back

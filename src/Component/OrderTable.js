@@ -2,7 +2,8 @@ import React from "react";
 import Navbar from "./Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 function OrderTable() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,12 +40,10 @@ function OrderTable() {
   return (
     <div className="w-full mt-[80px]">
       <Navbar />
-      <button
-        className="mt-[10px] bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded"
+      <ArrowBackIcon
+        className="w-10 hover:bg-slate-200 rounded-full"
         onClick={() => window.history.back()}
-      >
-        Go Back
-      </button>
+      />
       <h1 className="text-rodhi-red text-[2rem] font-semibold text-center w-full mx-auto">
         Shipment Details
       </h1>
@@ -72,7 +71,21 @@ function OrderTable() {
                 <h2 className="text-2xl font-bold">CRM Details:</h2>
                 {/* Render CRM Details from the first object */}
                 <p className="text-lg m-1">{firstObject.assignedToFullName}</p>
-                <p className="text-lg m-1">{firstObject.assignedToPhone}</p>
+                <p className="text-lg m-1">
+                  <a
+                    className="text-rodhi-blue hover:text-rodhi-red"
+                    href={"tel:" + firstObject.assignedToPhone}
+                  >
+                    {firstObject.assignedToPhone}
+                  </a>
+                  <a
+                    href={"https://wa.me/" + firstObject.assignedToPhone}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <WhatsAppIcon />
+                  </a>
+                </p>
               </div>
             </div>
 

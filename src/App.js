@@ -4,7 +4,7 @@ import Form from "./Component/Form";
 import NotFoundPage from "./Pages/NotFoundPage";
 import OrderTable from "./Component/OrderTable";
 import TimeLine from "./Component/TimeLine";
-import MUI from "./Component/MUI";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -13,7 +13,6 @@ const router = createBrowserRouter([
   },
   { path: "/orderdetail", element: <OrderTable /> },
   { path: "/status", element: <TimeLine /> },
-  { path: "/mui", element: <MUI /> },
   { path: "*", element: <NotFoundPage /> },
 ]);
 function App() {

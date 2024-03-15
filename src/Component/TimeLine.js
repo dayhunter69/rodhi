@@ -11,17 +11,23 @@ import TimelineContent from "@mui/lab/TimelineContent";
 
 const VerticalTimeline = ({ events, activeStatus }) => {
   console.log(activeStatus);
+  const activeIndex = events.findIndex(
+    (event) => event.status === activeStatus
+  );
+
   return (
     <Timeline position="alternate">
       {events.map((event, index) => (
         <TimelineItem key={index}>
           <TimelineSeparator>
             <TimelineDot
-              color={event.status === activeStatus ? "primary" : "secondary"}
+              color={index >= activeIndex ? event.color : "secondary"}
             />
             {index !== events.length - 1 && <TimelineConnector />}
           </TimelineSeparator>
-          <TimelineContent>{event.status}</TimelineContent>
+          <TimelineContent>
+            {activeStatus === "canceled" ? "Canceled" : event.name}
+          </TimelineContent>
         </TimelineItem>
       ))}
     </Timeline>
@@ -40,19 +46,47 @@ const TimeLine = () => {
   console.log("Data: ", data);
   console.log("Status: ", status);
   const events = [
-    { status: "canceled" },
-    { status: "toShipment" },
-    { status: "arrivedAtWarehouse" },
-    { status: "waitingToReceiveAtWarehouse" },
-    { status: "paymentComplete" },
-    { status: "paymentPending" },
+    { status: "delivered", color: "#2ecc71", name: "Delivered" }, // Emerald
+    { status: "deliveredPartial", color: "#3498db", name: "Out for Delivery" }, // Sky Blue
+    {
+      status: "arrivedAtKTMWarehouse",
+      color: "#9b59b6",
+      name: "Arrived at KTM Warehouse",
+    }, // Amethyst
+    { status: "delayAtCustoms", color: "#e74c3c", name: "Delay at Customs" }, // Alizarin
+    {
+      status: "arrivedAtCustoms",
+      color: "#f1c40f",
+      name: "Arrived at Customs",
+    }, // Sunflower
+    { status: "flightDelay", color: "#1abc9c", name: "Flight Delay" }, // Turquoise
+    { status: "readyForFlight", color: "#e67e22", name: "Ready for Flight" }, // Carrot
+    {
+      status: "scheduleForFlight",
+      color: "#34495e",
+      name: "Schedule for Flight",
+    }, // Wet Asphalt
+    { status: "toShipment", color: "#95a5a6", name: "To Shipment" }, // Concrete
+    {
+      status: "arrivedAtWarehouse",
+      color: "#27ae60",
+      name: "Arrived at Warehouse",
+    }, // Nephritis
+    {
+      status: "waitingToReceiveAtWarehouse",
+      color: "#f39c12",
+      name: "Waiting to Receive at Warehouse",
+    }, // Orange
+    { status: "paymentComplete", color: "#16a085", name: "Payment Complete" }, // Green Sea
+    { status: "paymentPending", color: "#d35400", name: "Payment Pending" }, // Pumpkin
   ];
 
   return (
     <div>
       <Navbar />
       <ArrowBackIcon
-        className="w-10 hover:bg-slate-200 rounded-full mt-[70px] ml-2"
+        className="w-10 hover:bg-slate-200 rounded-full mt-[70px] ml-2 cursor-pointer"
+        sx={{ width: 20, height: 20 }}
         onClick={() => window.history.back()}
       />
       <div className="px-4 py-4 rounded-2xl bg-gray-100 shadow-md flex-grow-1 basis-1/3">

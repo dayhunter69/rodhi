@@ -41,7 +41,8 @@ function OrderTable() {
     <div className="w-full mt-[80px]">
       <Navbar />
       <ArrowBackIcon
-        className="w-10 hover:bg-slate-200 rounded-full"
+        className="w-10 hover:bg-slate-200 rounded-full cursor-pointer"
+        sx={{ width: 20, height: 20 }}
         onClick={() => window.history.back()}
       />
       <h1 className="text-rodhi-red text-[2rem] font-semibold text-center w-full mx-auto">

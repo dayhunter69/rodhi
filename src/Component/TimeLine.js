@@ -8,29 +8,120 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineContent from "@mui/lab/TimelineContent";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#808080",
+      contrastText: "#ffffff",
+    },
+    delivered: {
+      main: "#2ecc71",
+      contrastText: "#ffffff",
+    },
+    deliveredPartial: {
+      main: "#3498db",
+      contrastText: "#ffffff",
+    },
+    arrivedAtKTMWarehouse: {
+      main: "#9b59b6",
+      contrastText: "#ffffff",
+    },
+    delayAtCustoms: {
+      main: "#e74c3c",
+      contrastText: "#ffffff",
+    },
+    arrivedAtCustoms: {
+      main: "#f1c40f",
+      contrastText: "#000000",
+    },
+    flightDelay: {
+      main: "#1abc9c",
+      contrastText: "#ffffff",
+    },
+    readyForFlight: {
+      main: "#e67e22",
+      contrastText: "#ffffff",
+    },
+    scheduleForFlight: {
+      main: "#34495e",
+      contrastText: "#ffffff",
+    },
+    toShipment: {
+      main: "#95a5a6",
+      contrastText: "#000000",
+    },
+    arrivedAtWarehouse: {
+      main: "#27ae60",
+      contrastText: "#ffffff",
+    },
+    waitingToReceiveAtWarehouse: {
+      main: "#f39c12",
+      contrastText: "#000000",
+    },
+    paymentComplete: {
+      main: "#16a085",
+      contrastText: "#ffffff",
+    },
+    paymentPending: {
+      main: "#d35400",
+      contrastText: "#ffffff",
+    },
+    success: {
+      main: "#4caf50",
+      contrastText: "#ffffff",
+    },
+    secondary: {
+      main: "#b3b3b3",
+      contrastText: "#000000",
+    },
+    completeConnector: {
+      main: "#000000",
+      contrastText: "#ffffff",
+    },
+    incompleteConnector: {
+      main: "#c9c5c5",
+      contrastText: "#000000",
+    },
+  },
+});
 
 const VerticalTimeline = ({ events, activeStatus }) => {
   console.log(activeStatus);
   const activeIndex = events.findIndex(
     (event) => event.status === activeStatus
   );
+  console.log("Active Index:", activeIndex);
 
   return (
-    <Timeline position="alternate">
-      {events.map((event, index) => (
-        <TimelineItem key={index}>
-          <TimelineSeparator>
-            <TimelineDot
-              color={index >= activeIndex ? event.color : "secondary"}
-            />
-            {index !== events.length - 1 && <TimelineConnector />}
-          </TimelineSeparator>
-          <TimelineContent>
-            {activeStatus === "canceled" ? "Canceled" : event.name}
-          </TimelineContent>
-        </TimelineItem>
-      ))}
-    </Timeline>
+    <ThemeProvider theme={theme}>
+      <Timeline position="alternate">
+        {events.map((event, index) => (
+          <TimelineItem key={index}>
+            <TimelineSeparator>
+              <TimelineDot
+                color={index >= activeIndex ? event.color : "secondary"}
+                variant={index >= activeIndex ? "filled" : "outlined"}
+              />
+              {index !== events.length - 1 && (
+                <TimelineConnector
+                  sx={{
+                    bgcolor:
+                      index >= activeIndex
+                        ? theme.palette.completeConnector.main
+                        : theme.palette.incompleteConnector.main,
+                  }}
+                />
+              )}
+            </TimelineSeparator>
+            <TimelineContent>
+              {activeStatus === "canceled" ? "Canceled" : event.name}
+            </TimelineContent>
+          </TimelineItem>
+        ))}
+      </Timeline>
+    </ThemeProvider>
   );
 };
 
@@ -46,39 +137,59 @@ const TimeLine = () => {
   console.log("Data: ", data);
   console.log("Status: ", status);
   const events = [
-    { status: "delivered", color: "#2ecc71", name: "Delivered" }, // Emerald
-    { status: "deliveredPartial", color: "#3498db", name: "Out for Delivery" }, // Sky Blue
+    { status: "delivered", color: "delivered", name: "Delivered" },
+    {
+      status: "deliveredPartial",
+      color: "deliveredPartial",
+      name: "Out for Delivery",
+    },
     {
       status: "arrivedAtKTMWarehouse",
-      color: "#9b59b6",
+      color: "arrivedAtKTMWarehouse",
       name: "Arrived at KTM Warehouse",
-    }, // Amethyst
-    { status: "delayAtCustoms", color: "#e74c3c", name: "Delay at Customs" }, // Alizarin
+    },
+    {
+      status: "delayAtCustoms",
+      color: "delayAtCustoms",
+      name: "Delay at Customs",
+    },
     {
       status: "arrivedAtCustoms",
-      color: "#f1c40f",
+      color: "arrivedAtCustoms",
       name: "Arrived at Customs",
-    }, // Sunflower
-    { status: "flightDelay", color: "#1abc9c", name: "Flight Delay" }, // Turquoise
-    { status: "readyForFlight", color: "#e67e22", name: "Ready for Flight" }, // Carrot
+    },
+    { status: "flightDelay", color: "flightDelay", name: "Flight Delay" },
+    {
+      status: "readyForFlight",
+      color: "readyForFlight",
+      name: "Ready for Flight",
+    },
     {
       status: "scheduleForFlight",
-      color: "#34495e",
+      color: "scheduleForFlight",
       name: "Schedule for Flight",
-    }, // Wet Asphalt
-    { status: "toShipment", color: "#95a5a6", name: "To Shipment" }, // Concrete
+    },
+    { status: "toShipment", color: "toShipment", name: "To Shipment" },
     {
       status: "arrivedAtWarehouse",
-      color: "#27ae60",
+      color: "arrivedAtWarehouse",
       name: "Arrived at Warehouse",
-    }, // Nephritis
+    },
     {
       status: "waitingToReceiveAtWarehouse",
-      color: "#f39c12",
+      color: "waitingToReceiveAtWarehouse",
       name: "Waiting to Receive at Warehouse",
-    }, // Orange
-    { status: "paymentComplete", color: "#16a085", name: "Payment Complete" }, // Green Sea
-    { status: "paymentPending", color: "#d35400", name: "Payment Pending" }, // Pumpkin
+    },
+    {
+      status: "paymentComplete",
+      color: "paymentComplete",
+      name: "Payment Complete",
+    },
+    {
+      status: "paymentPending",
+      color: "paymentPending",
+      name: "Payment Pending",
+    },
   ];
 
   return (

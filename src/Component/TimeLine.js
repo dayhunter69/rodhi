@@ -8,7 +8,9 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineContent from "@mui/lab/TimelineContent";
+import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import PropTypes from "prop-types";
 
 const theme = createTheme({
   palette: {
@@ -87,24 +89,42 @@ const theme = createTheme({
   },
 });
 
-const VerticalTimeline = ({ events, activeStatus }) => {
-  console.log(activeStatus);
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString();
+};
+
+const VerticalTimeline = ({ events, activeStatus, statusTimestamps }) => {
   const activeIndex = events.findIndex(
     (event) => event.status === activeStatus
   );
-  console.log("Active Index:", activeIndex);
+
+  const updatedEvents = events.map((event) => {
+    const statusTimestamp = statusTimestamps.find(
+      (timestamp) => timestamp.status === event.status
+    );
+
+    if (statusTimestamp) {
+      return {
+        ...event,
+        lastUpdatedAt: statusTimestamp.timeStamp,
+      };
+    }
+
+    return event;
+  });
 
   return (
     <ThemeProvider theme={theme}>
       <Timeline position="alternate">
-        {events.map((event, index) => (
+        {updatedEvents.map((event, index) => (
           <TimelineItem key={index}>
             <TimelineSeparator>
               <TimelineDot
                 color={index >= activeIndex ? event.color : "secondary"}
                 variant={index >= activeIndex ? "filled" : "outlined"}
               />
-              {index !== events.length - 1 && (
+              {index !== updatedEvents.length - 1 && (
                 <TimelineConnector
                   sx={{
                     bgcolor:
@@ -115,8 +135,15 @@ const VerticalTimeline = ({ events, activeStatus }) => {
                 />
               )}
             </TimelineSeparator>
-            <TimelineContent>
-              {activeStatus === "canceled" ? "Canceled" : event.name}
+            <TimelineContent sx={{ py: "12px", px: 2 }}>
+              <Typography variant="h6" component="span">
+                {activeStatus === "canceled" ? "Canceled" : event.name}
+              </Typography>
+              <Typography variant="body2">
+                {event.lastUpdatedAt
+                  ? formatTimestamp(event.lastUpdatedAt)
+                  : ""}
+              </Typography>
             </TimelineContent>
           </TimelineItem>
         ))}
@@ -125,17 +152,45 @@ const VerticalTimeline = ({ events, activeStatus }) => {
   );
 };
 
+VerticalTimeline.propTypes = {
+  events: PropTypes.arrayOf(
+    PropTypes.shape({
+      status: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  activeStatus: PropTypes.string.isRequired,
+  statusTimestamps: PropTypes.arrayOf(
+    PropTypes.shape({
+      status: PropTypes.string.isRequired,
+      timeStamp: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+};
+
 const TimeLine = () => {
   const location = useLocation();
 
-  // Extract status from location state
   const status =
-    location.state?.data?.status ||
-    location.state?.item?.status ||
-    location.state;
-  const data = location.state?.data || location.state?.item;
-  console.log("Data: ", data);
-  console.log("Status: ", status);
+    location.state?.data?.status || location.state?.item?.status || "";
+  const statusTimestamps =
+    location.state?.data?.statusTimestamps ||
+    location.state?.item?.statusTimestamps ||
+    [];
+  const data = location.state?.data || location.state?.item || {};
+
+  if (!status || !statusTimestamps || !data) {
+    return (
+      <div>
+        <Navbar />
+        <p>
+          Sorry, there was an error loading the data. Please try again later.
+        </p>
+      </div>
+    );
+  }
+
   const events = [
     { status: "delivered", color: "delivered", name: "Delivered" },
     {
@@ -202,20 +257,21 @@ const TimeLine = () => {
       />
       <div className="px-4 py-4 rounded-2xl bg-gray-100 shadow-md flex-grow-1 basis-1/3">
         <h2 className="text-2xl font-bold">Product Details:</h2>
-        {/* Render Shipment Details from the first object */}
         <p className="text-lg m-1">Category: {data.category || "N/A"}</p>
         <p className="text-lg m-1">Nature: {data.goodsType || "N/A"}</p>
         <p className="text-lg m-1">Product: {data.productName || "N/A"}</p>
-        <p className="text-lg m-1">Quantity: {data.quantity || "N/A"}</p>{" "}
-        {/* Use correct property for quantity */}
-        <p className="text-lg m-1">Size: {data.size || "N/A"}</p>{" "}
-        {/* Use correct property for size */}
+        <p className="text-lg m-1">Quantity: {data.quantity || "N/A"}</p>
+        <p className="text-lg m-1">Size: {data.size || "N/A"}</p>
         <p className="text-lg m-1">Weight: {data.weight || "N/A"}</p>
         <p className="text-lg m-1">
           Tracking Number: {data.trackingNumber || "N/A"}
         </p>
       </div>
-      <VerticalTimeline events={events} activeStatus={status} />
+      <VerticalTimeline
+        events={events}
+        activeStatus={status}
+        statusTimestamps={statusTimestamps}
+      />
     </div>
   );
 };

@@ -11,6 +11,7 @@ import TimelineContent from "@mui/lab/TimelineContent";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
+import Footer from "./Footer";
 
 const theme = createTheme({
   palette: {
@@ -272,6 +273,7 @@ const TimeLine = () => {
         activeStatus={status}
         statusTimestamps={statusTimestamps}
       />
+      <Footer />
     </div>
   );
 };

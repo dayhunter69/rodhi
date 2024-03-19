@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import Footer from "./Footer";
 function OrderTable() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -157,6 +158,7 @@ function OrderTable() {
           </button>
         </div>
       </Link>
+      <Footer />
     </div>
   );
 }

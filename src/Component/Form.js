@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import OrderTable from "./OrderTable";
 import { useNavigate } from "react-router-dom";
 import helpImage from "../Assets/Message.png";
+import Footer from "./Footer";
 
 function Form() {
   const [prettyOrderID, setPrettyOrderID] = useState("");
@@ -84,7 +85,7 @@ function Form() {
   };
 
   return (
-    <div className="mb-8">
+    <div>
       <Navbar />
       <div className="w-full flex flex-col mt-[6rem]">
         <h1 className="text-rodhi-red text-2xl font-semibold text-center">
@@ -211,6 +212,7 @@ function Form() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

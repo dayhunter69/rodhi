@@ -12,20 +12,33 @@ function Form() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const convertPrettyOrderID = (prettyOrderID) => {
-    let trimmedInput;
-    if (prettyOrderID.startsWith("RGO-")) {
-      trimmedInput = prettyOrderID.slice(4);
-    } else {
-      trimmedInput = prettyOrderID;
-    }
+    // Remove all spaces from the input string
+    const trimmedInput = prettyOrderID.replace(/\s/g, "");
 
     let convertedID = "";
 
-    for (const char of trimmedInput) {
-      if (/[A-Z]/.test(char)) {
-        convertedID += char.charCodeAt(0) - 65;
-      } else {
-        convertedID += char;
+    // Convert the input and check strings to the same case (lowercase in this case)
+    const lowercaseTrimmedInput = trimmedInput.toLowerCase();
+    const rgoCheckString = "rgo-";
+
+    // Check if the input starts with "rgo-" (case-insensitive)
+    if (lowercaseTrimmedInput.startsWith(rgoCheckString)) {
+      const slicedInput = trimmedInput.slice(4);
+
+      for (const char of slicedInput) {
+        if (/[A-Z]/.test(char)) {
+          convertedID += char.charCodeAt(0) - 65;
+        } else {
+          convertedID += char;
+        }
+      }
+    } else {
+      for (const char of trimmedInput) {
+        if (/[A-Z]/.test(char)) {
+          convertedID += char.charCodeAt(0) - 65;
+        } else {
+          convertedID += char;
+        }
       }
     }
 
@@ -106,7 +119,7 @@ function Form() {
               placeholder="Shipment Number (Eg: RGO-123)"
               autoComplete="off"
               onChange={(e) => setPrettyOrderID(e.target.value)}
-              className="w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
+              className="w-11/12 md:w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
             />
 
             <input
@@ -115,12 +128,12 @@ function Form() {
               placeholder="Your Phone Number"
               onChange={(e) => setPhone(e.target.value)}
               autoComplete="off"
-              className="w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
+              className="w-11/12 md:w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
             />
 
             <button
               type="submit"
-              className="w-3/12 items-center bg-red-600 text-white py-2 mx-10 rounded-md hover:bg-blue-900"
+              className="w-2/5 md:w-3/12 items-center bg-red-600 text-white py-2 mx-10 rounded-md hover:bg-blue-900"
             >
               Track
             </button>

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Footer from "./Footer";
+
 function OrderTable() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,11 +13,11 @@ function OrderTable() {
   const handleViewMore = (item) => {
     navigate("/status", {
       replace: false,
-      state: { data: item },
+      state: { data: item, initialOrderID: location.state.initialOrderID },
     });
   };
 
-  if (!location.state.data || !location.state) {
+  if (!location.state || !location.state.data) {
     return (
       <div>
         <div
@@ -30,6 +31,14 @@ function OrderTable() {
   }
 
   const responseData = location.state.data;
+  let subOrderIndex;
+  if (location.state.subOrderIndex === 0) {
+    subOrderIndex = 0;
+  } else if (location.state.subOrderIndex) {
+    subOrderIndex = location.state.subOrderIndex;
+  } else {
+    subOrderIndex = null;
+  }
 
   // Get the first object from the response data
   const firstObject = responseData[0];
@@ -38,6 +47,13 @@ function OrderTable() {
   const orderItems = Object.values(responseData).filter(
     (item) => typeof item === "object" && item.hasOwnProperty("orderArrayID")
   );
+
+  // Render all order items if subOrderIndex is null
+  const filteredOrderItems =
+    subOrderIndex === null
+      ? orderItems
+      : orderItems.filter((item, index) => index === subOrderIndex);
+
   return (
     <div className="w-full mt-[80px]">
       <Navbar />
@@ -47,8 +63,11 @@ function OrderTable() {
         onClick={() => window.history.back()}
       />
       <h1 className="text-rodhi-red text-[2rem] font-semibold text-center w-full mx-auto">
-        Shipment Details
+        Shipment Detail
       </h1>
+      <h2 className="text-rodhi-red text-[1.5rem] font-semibold text-center w-full mx-auto">
+        Shipment Number: {location.state.initialOrderID}
+      </h2>
       <main className="p-5 h-min" id="customers_table">
         <section className="w-full rounded-lg shadow p-3">
           <div className="p-3">
@@ -60,7 +79,6 @@ function OrderTable() {
               </div>
               <div className="px-4 py-4 rounded-2xl bg-gray-100 shadow-md flex-grow-1 basis-1/3">
                 <h2 className="text-2xl font-bold">Shipment Details:</h2>
-                {/* Render Shipment Details from the first object */}
                 <p className="text-lg m-1">
                   Country of Import: {firstObject.countryToImport}
                 </p>
@@ -71,7 +89,6 @@ function OrderTable() {
               </div>
               <div className="px-4 py-4 rounded-2xl bg-gray-100 shadow-md flex-grow-1 basis-1/3">
                 <h2 className="text-2xl font-bold">CRM Details:</h2>
-                {/* Render CRM Details from the first object */}
                 <p className="text-lg m-1">{firstObject.assignedToFullName}</p>
                 <p className="text-lg m-1">
                   <a
@@ -91,7 +108,6 @@ function OrderTable() {
               </div>
             </div>
 
-            {/* Render the table */}
             <div className="overflow-auto rounded-lg shadow mt-5">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b-2 border-gray-200">
@@ -117,8 +133,7 @@ function OrderTable() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {/* Render order items */}
-                  {orderItems.map((item, index) => (
+                  {filteredOrderItems.map((item, index) => (
                     <tr key={index}>
                       <td className="p-3 text-sm text-gray-900 whitespace-nowrap">
                         {item.category}
@@ -133,7 +148,11 @@ function OrderTable() {
                         {item.status}
                       </td>
                       <td className="p-3 text-sm text-gray-900 whitespace-nowrap">
-                        {item.lastUpdatedAt}
+                        {new Date(item.lastUpdatedAt).toLocaleString("en-US", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })}
                       </td>
                       <td className="p-3 text-sm text-gray-900 whitespace-nowrap">
                         <button

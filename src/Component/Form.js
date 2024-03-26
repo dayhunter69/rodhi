@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import OrderTable from "./OrderTable";
 import { useNavigate } from "react-router-dom";
@@ -10,56 +10,52 @@ function Form() {
   const [phone, setPhone] = useState("");
   const [responseData, setResponseData] = useState(null);
   const [error, setError] = useState("");
+  const [initialOrderID, setInitialOrderID] = useState("");
+  const [initialPhone, setInitialPhone] = useState("");
+  const [prettyOrderIDError, setPrettyOrderIDError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const navigate = useNavigate();
-  const convertPrettyOrderID = (prettyOrderID) => {
-    // Remove all spaces from the input string
+  const shipmentNumberRegex = /^[\w\s-]{1,9}$/;
+  const phoneNumberRegex = /^[0-9]{10}$/;
+  useEffect(() => {
+    setPrettyOrderID(initialOrderID);
+    setPhone(initialPhone);
+  }, [initialOrderID, initialPhone]);
+
+  const getOrderNumber = (prettyOrderID) => {
     const trimmedInput = prettyOrderID.replace(/\s/g, "");
-
-    let convertedID = "";
-
-    // Convert the input and check strings to the same case (lowercase in this case)
-    const lowercaseTrimmedInput = trimmedInput.toLowerCase();
-    const rgoCheckString = "rgo-";
-
-    // Check if the input starts with "rgo-" (case-insensitive)
-    if (lowercaseTrimmedInput.startsWith(rgoCheckString)) {
-      const slicedInput = trimmedInput.slice(4);
-
-      for (const char of slicedInput) {
-        if (/[A-Z]/.test(char)) {
-          convertedID += char.charCodeAt(0) - 65;
-        } else {
-          convertedID += char;
-        }
-      }
-    } else {
-      for (const char of trimmedInput) {
-        if (/[A-Z]/.test(char)) {
-          convertedID += char.charCodeAt(0) - 65;
-        } else {
-          convertedID += char;
-        }
-      }
-    }
-
-    const lastChar = convertedID.slice(-1);
-    const isLastCharAlphabet = /[A-Z]/.test(lastChar);
-    const endsWithHyphen = convertedID.endsWith("-");
-
-    if (isLastCharAlphabet && !endsWithHyphen) {
-      convertedID += "-" + (lastChar.charCodeAt(0) - 65);
-    }
-    return convertedID;
+    const match = trimmedInput.match(/\d+/);
+    return match ? match[0] : "";
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setPrettyOrderIDError("");
+    setPhoneError("");
+
+    // Validate the shipment number
+    if (!shipmentNumberRegex.test(prettyOrderID)) {
+      setPrettyOrderIDError(
+        "Please enter a valid shipment number (e.g., RGO-123)"
+      );
+      return;
+    }
+
+    // Validate the phone number
+    if (!phoneNumberRegex.test(phone)) {
+      setPhoneError("Please enter a valid 10-digit phone number");
+      return;
+    }
+
     try {
+      const orderNumber = getOrderNumber(prettyOrderID);
       const requestData = {
-        prettyOrderID: convertPrettyOrderID(prettyOrderID),
+        prettyOrderID: orderNumber,
         phone,
       };
+      setInitialOrderID(prettyOrderID);
+      setInitialPhone(phone);
 
       const response = await fetch(
         "https://rodhisync.rangaoffice.com/api/v1/orders/thirdPartyAPI",
@@ -77,9 +73,10 @@ function Form() {
         if (jsonResponse && jsonResponse.data) {
           setResponseData(jsonResponse);
           setError("");
+          const subOrderIndex = getSubOrderIndex(prettyOrderID);
           navigate("/orderdetail", {
             replace: false,
-            state: { data: jsonResponse.data },
+            state: { data: jsonResponse.data, subOrderIndex, initialOrderID },
           });
         } else {
           setError("Invalid order ID or phone number");
@@ -95,6 +92,15 @@ function Form() {
       );
       setResponseData(null);
     }
+  };
+
+  const getSubOrderIndex = (prettyOrderID) => {
+    const match = prettyOrderID.match(/[A-Z]$/i); // Match the last alphabet (case insensitive)
+    if (match) {
+      const subOrderAlphabet = match[0].toUpperCase();
+      return subOrderAlphabet.charCodeAt(0) - 65; // Convert alphabet to index (0-based)
+    }
+    return null; // Return null if no alphabet is present
   };
 
   return (
@@ -118,9 +124,16 @@ function Form() {
               value={prettyOrderID}
               placeholder="Shipment Number (Eg: RGO-123)"
               autoComplete="off"
-              onChange={(e) => setPrettyOrderID(e.target.value)}
+              onChange={(e) => {
+                setPrettyOrderID(e.target.value);
+                setInitialOrderID(e.target.value);
+              }}
               className="w-11/12 md:w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
+              required
             />
+            {prettyOrderIDError && (
+              <span className="text-red-500 mb-2">{prettyOrderIDError}</span>
+            )}
 
             <input
               type="tel"
@@ -129,7 +142,11 @@ function Form() {
               onChange={(e) => setPhone(e.target.value)}
               autoComplete="off"
               className="w-11/12 md:w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
+              required
             />
+            {phoneError && (
+              <span className="text-red-500 mb-2">{phoneError}</span>
+            )}
 
             <button
               type="submit"

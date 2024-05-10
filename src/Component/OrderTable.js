@@ -5,12 +5,13 @@ import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import Footer from "./Footer";
-
+import ReactGA from "react-ga4";
 function OrderTable() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleViewMore = (item) => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
     navigate("/status", {
       replace: false,
       state: { data: item, initialOrderID: location.state.initialOrderID },

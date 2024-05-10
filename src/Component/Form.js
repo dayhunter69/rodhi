@@ -4,7 +4,7 @@ import OrderTable from "./OrderTable";
 import { useNavigate } from "react-router-dom";
 import helpImage from "../Assets/Message.png";
 import Footer from "./Footer";
-
+import ReactGA from "react-ga4";
 function Form() {
   const [prettyOrderID, setPrettyOrderID] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,6 +22,9 @@ function Form() {
     setPhone(initialPhone);
   }, [initialOrderID, initialPhone]);
 
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  }, []);
   const getOrderNumber = (prettyOrderID) => {
     const trimmedInput = prettyOrderID.replace(/\s/g, "");
     const match = trimmedInput.match(/\d+/);

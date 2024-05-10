@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
 import Footer from "./Footer";
+import ReactGA from "react-ga4";
 
 const theme = createTheme({
   palette: {
@@ -172,7 +173,7 @@ VerticalTimeline.propTypes = {
 
 const TimeLine = () => {
   const location = useLocation();
-
+  ReactGA.send({ hitType: "pageview", page: window.location.pathname });
   const status =
     location.state?.data?.status || location.state?.item?.status || "";
   const statusTimestamps =

@@ -1,92 +1,92 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-import Navbar from "./Navbar";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineContent from "@mui/lab/TimelineContent";
-import Typography from "@mui/material/Typography";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import PropTypes from "prop-types";
-import Footer from "./Footer";
-import ReactGA from "react-ga4";
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import Navbar from './Navbar';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineDot from '@mui/lab/TimelineDot';
+import TimelineContent from '@mui/lab/TimelineContent';
+import Typography from '@mui/material/Typography';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+import Footer from './Footer';
+import ReactGA from 'react-ga4';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#808080",
-      contrastText: "#ffffff",
+      main: '#808080',
+      contrastText: '#ffffff',
     },
     delivered: {
-      main: "#2ecc71",
-      contrastText: "#ffffff",
+      main: '#2ecc71',
+      contrastText: '#ffffff',
     },
     deliveredPartial: {
-      main: "#3498db",
-      contrastText: "#ffffff",
+      main: '#3498db',
+      contrastText: '#ffffff',
     },
     arrivedAtKTMWarehouse: {
-      main: "#9b59b6",
-      contrastText: "#ffffff",
+      main: '#9b59b6',
+      contrastText: '#ffffff',
     },
     delayAtCustoms: {
-      main: "#e74c3c",
-      contrastText: "#ffffff",
+      main: '#e74c3c',
+      contrastText: '#ffffff',
     },
     arrivedAtCustoms: {
-      main: "#f1c40f",
-      contrastText: "#000000",
+      main: '#f1c40f',
+      contrastText: '#000000',
     },
     flightDelay: {
-      main: "#1abc9c",
-      contrastText: "#ffffff",
+      main: '#1abc9c',
+      contrastText: '#ffffff',
     },
     readyForFlight: {
-      main: "#e67e22",
-      contrastText: "#ffffff",
+      main: '#e67e22',
+      contrastText: '#ffffff',
     },
     scheduleForFlight: {
-      main: "#34495e",
-      contrastText: "#ffffff",
+      main: '#34495e',
+      contrastText: '#ffffff',
     },
     toShipment: {
-      main: "#95a5a6",
-      contrastText: "#000000",
+      main: '#95a5a6',
+      contrastText: '#000000',
     },
     arrivedAtWarehouse: {
-      main: "#27ae60",
-      contrastText: "#ffffff",
+      main: '#27ae60',
+      contrastText: '#ffffff',
     },
     waitingToReceiveAtWarehouse: {
-      main: "#f39c12",
-      contrastText: "#000000",
+      main: '#f39c12',
+      contrastText: '#000000',
     },
     paymentComplete: {
-      main: "#16a085",
-      contrastText: "#ffffff",
+      main: '#16a085',
+      contrastText: '#ffffff',
     },
     paymentPending: {
-      main: "#d35400",
-      contrastText: "#ffffff",
+      main: '#d35400',
+      contrastText: '#ffffff',
     },
     success: {
-      main: "#4caf50",
-      contrastText: "#ffffff",
+      main: '#4caf50',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: "#b3b3b3",
-      contrastText: "#000000",
+      main: '#b3b3b3',
+      contrastText: '#000000',
     },
     completeConnector: {
-      main: "#000000",
-      contrastText: "#ffffff",
+      main: '#000000',
+      contrastText: '#ffffff',
     },
     incompleteConnector: {
-      main: "#c9c5c5",
-      contrastText: "#000000",
+      main: '#c9c5c5',
+      contrastText: '#000000',
     },
   },
 });
@@ -123,8 +123,8 @@ const VerticalTimeline = ({ events, activeStatus, statusTimestamps }) => {
           <TimelineItem key={index}>
             <TimelineSeparator>
               <TimelineDot
-                color={index >= activeIndex ? event.color : "secondary"}
-                variant={index >= activeIndex ? "filled" : "outlined"}
+                color={index >= activeIndex ? event.color : 'secondary'}
+                variant={index >= activeIndex ? 'filled' : 'outlined'}
               />
               {index !== updatedEvents.length - 1 && (
                 <TimelineConnector
@@ -137,14 +137,14 @@ const VerticalTimeline = ({ events, activeStatus, statusTimestamps }) => {
                 />
               )}
             </TimelineSeparator>
-            <TimelineContent sx={{ py: "12px", px: 2 }}>
+            <TimelineContent sx={{ py: '12px', px: 2 }}>
               <Typography variant="h6" component="span">
-                {activeStatus === "canceled" ? "Canceled" : event.name}
+                {activeStatus === 'canceled' ? 'Canceled' : event.name}
               </Typography>
               <Typography variant="body2">
                 {event.lastUpdatedAt
                   ? formatTimestamp(event.lastUpdatedAt)
-                  : ""}
+                  : ''}
               </Typography>
             </TimelineContent>
           </TimelineItem>
@@ -173,9 +173,9 @@ VerticalTimeline.propTypes = {
 
 const TimeLine = () => {
   const location = useLocation();
-  ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+  ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
   const status =
-    location.state?.data?.status || location.state?.item?.status || "";
+    location.state?.data?.status || location.state?.item?.status || '';
   const statusTimestamps =
     location.state?.data?.statusTimestamps ||
     location.state?.item?.statusTimestamps ||
@@ -194,61 +194,109 @@ const TimeLine = () => {
   }
 
   const events = [
-    { status: "delivered", color: "delivered", name: "Delivered" },
+    { status: 'delivered', color: 'delivered', name: 'Delivered' },
     {
-      status: "outForDelivery",
-      color: "deliveredPartial",
-      name: "Out for Delivery",
+      status: 'outForDelivery',
+      color: 'deliveredPartial',
+      name: 'Out for Delivery',
     },
     {
-      status: "arrivedAtKTMWarehouse",
-      color: "arrivedAtKTMWarehouse",
-      name: "Arrived at KTM Warehouse",
+      status: 'arrivedAtKTMWarehouse',
+      color: 'arrivedAtKTMWarehouse',
+      name: 'Arrived at KTM Warehouse',
     },
     {
-      status: "delayAtCustoms",
-      color: "delayAtCustoms",
-      name: "Delay at Customs",
+      status: 'delayAtCustoms',
+      color: 'delayAtCustoms',
+      name: 'Delay at Customs',
     },
     {
-      status: "arrivedAtCustoms",
-      color: "arrivedAtCustoms",
-      name: "Arrived at Customs",
+      status: 'arrivedAtCustoms',
+      color: 'arrivedAtCustoms',
+      name: 'Arrived at Customs',
     },
-    { status: "flightDelay", color: "flightDelay", name: "Flight Delay" },
+    { status: 'flightDelay', color: 'flightDelay', name: 'Flight Delay' },
     {
-      status: "readyForFlight",
-      color: "readyForFlight",
-      name: "Ready for Flight",
-    },
-    {
-      status: "scheduleForFlight",
-      color: "scheduleForFlight",
-      name: "Schedule for Flight",
-    },
-    { status: "toShipment", color: "toShipment", name: "To Shipment" },
-    {
-      status: "arrivedAtWarehouse",
-      color: "arrivedAtWarehouse",
-      name: "Arrived at Warehouse",
+      status: 'readyForFlight',
+      color: 'readyForFlight',
+      name: 'Ready for Flight',
     },
     {
-      status: "waitingToReceiveAtWarehouse",
-      color: "waitingToReceiveAtWarehouse",
-      name: "Waiting to Receive at Warehouse",
+      status: 'scheduleForFlight',
+      color: 'scheduleForFlight',
+      name: 'Schedule for Flight',
+    },
+    { status: 'toShipment', color: 'toShipment', name: 'To Shipment' },
+    {
+      status: 'arrivedAtWarehouse',
+      color: 'arrivedAtWarehouse',
+      name: 'Arrived at Warehouse',
     },
     {
-      status: "paymentComplete",
-      color: "paymentComplete",
-      name: "Payment Complete",
+      status: 'waitingToReceiveAtWarehouse',
+      color: 'waitingToReceiveAtWarehouse',
+      name: 'Waiting to Receive at Warehouse',
     },
     {
-      status: "paymentPending",
-      color: "paymentPending",
-      name: "Payment Pending",
+      status: 'paymentComplete',
+      color: 'paymentComplete',
+      name: 'Payment Complete',
+    },
+    {
+      status: 'paymentPending',
+      color: 'paymentPending',
+      name: 'Payment Pending',
     },
   ];
-
+  const Roadevents = [
+    { status: 'delivered', color: 'delivered', name: 'Delivered' },
+    {
+      status: 'outForDelivery',
+      color: 'deliveredPartial',
+      name: 'Out for Delivery',
+    },
+    {
+      status: 'arrivedAtKTMWarehouse',
+      color: 'arrivedAtCustoms',
+      name: 'Arrived at KTM Warehouse',
+    },
+    {
+      status: 'arrivedAtRasuwaCustoms',
+      color: 'readyForFlight',
+      name: 'Arrived At Rasuwa Customs',
+    },
+    {
+      status: 'arrivedAtKerungBorder',
+      color: 'scheduleForFlight',
+      name: 'Arrived At Kerung Border',
+    },
+    {
+      status: 'dispatchedFromCNWarehouse',
+      color: 'toShipment',
+      name: 'Dispatched From China Warehouse',
+    },
+    {
+      status: 'arrivedAtCNWarehouse',
+      color: 'arrivedAtWarehouse',
+      name: 'Arrived at China Warehouse',
+    },
+    {
+      status: 'waitingToReceiveAtCNWarehouse',
+      color: 'waitingToReceiveAtWarehouse',
+      name: 'Waiting to Receive at China Warehouse',
+    },
+    {
+      status: 'paymentComplete',
+      color: 'paymentComplete',
+      name: 'Payment Complete',
+    },
+    {
+      status: 'paymentPending',
+      color: 'paymentPending',
+      name: 'Payment Pending',
+    },
+  ];
+  const timelineEvents = data.shipmentMethod === 'road' ? Roadevents : events;
   return (
     <div>
       <Navbar />
@@ -262,18 +310,18 @@ const TimeLine = () => {
       </h2>
       <div className="px-4 py-4 rounded-2xl bg-gray-100 shadow-md flex-grow-1 basis-1/3">
         <h2 className="text-2xl font-bold">Product Details:</h2>
-        <p className="text-lg m-1">Category: {data.category || "N/A"}</p>
-        <p className="text-lg m-1">Nature: {data.goodsType || "N/A"}</p>
-        <p className="text-lg m-1">Product: {data.productName || "N/A"}</p>
-        <p className="text-lg m-1">Quantity: {data.quantity || "N/A"}</p>
-        <p className="text-lg m-1">Size: {data.size || "N/A"}</p>
-        <p className="text-lg m-1">Weight: {data.weight || "N/A"}</p>
+        <p className="text-lg m-1">Category: {data.category || 'N/A'}</p>
+        <p className="text-lg m-1">Nature: {data.goodsType || 'N/A'}</p>
+        <p className="text-lg m-1">Product: {data.productName || 'N/A'}</p>
+        <p className="text-lg m-1">Quantity: {data.quantity || 'N/A'}</p>
+        <p className="text-lg m-1">Size: {data.size || 'N/A'}</p>
+        <p className="text-lg m-1">Weight: {data.weight || 'N/A'}</p>
         <p className="text-lg m-1">
-          Tracking Number: {data.trackingNumber || "N/A"}
+          Tracking Number: {data.trackingNumber || 'N/A'}
         </p>
       </div>
       <VerticalTimeline
-        events={events}
+        events={timelineEvents}
         activeStatus={status}
         statusTimestamps={statusTimestamps}
       />

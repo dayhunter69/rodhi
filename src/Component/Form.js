@@ -1,53 +1,62 @@
-import React, { useState, useEffect } from "react";
-import Navbar from "./Navbar";
-import OrderTable from "./OrderTable";
-import { useNavigate } from "react-router-dom";
-import helpImage from "../Assets/Message.png";
-import Footer from "./Footer";
-import ReactGA from "react-ga4";
+import React, { useState, useEffect } from 'react';
+import Navbar from './Navbar';
+import OrderTable from './OrderTable';
+import { useNavigate } from 'react-router-dom';
+import helpImage from '../Assets/Message.png';
+import Footer from './Footer';
+import ReactGA from 'react-ga4';
+
 function Form() {
-  const [prettyOrderID, setPrettyOrderID] = useState("");
-  const [phone, setPhone] = useState("");
+  const [prettyOrderID, setPrettyOrderID] = useState('');
+  const [phone, setPhone] = useState('');
   const [responseData, setResponseData] = useState(null);
-  const [error, setError] = useState("");
-  const [initialOrderID, setInitialOrderID] = useState("");
-  const [initialPhone, setInitialPhone] = useState("");
-  const [prettyOrderIDError, setPrettyOrderIDError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
+  const [error, setError] = useState('');
+  const [prettyOrderIDError, setPrettyOrderIDError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const navigate = useNavigate();
   const shipmentNumberRegex = /^[\w\s-]{1,9}$/;
   const phoneNumberRegex = /^[0-9]{10}$/;
-  useEffect(() => {
-    setPrettyOrderID(initialOrderID);
-    setPhone(initialPhone);
-  }, [initialOrderID, initialPhone]);
 
   useEffect(() => {
-    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
+    // Retrieve data from local storage when the component mounts
+    const savedPrettyOrderID = localStorage.getItem('prettyOrderID');
+    const savedPhone = localStorage.getItem('phone');
+
+    if (savedPrettyOrderID) {
+      setPrettyOrderID(savedPrettyOrderID);
+    }
+    if (savedPhone) {
+      setPhone(savedPhone);
+    }
   }, []);
+
+  useEffect(() => {
+    ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
+  }, []);
+
   const getOrderNumber = (prettyOrderID) => {
-    const trimmedInput = prettyOrderID.replace(/\s/g, "");
+    const trimmedInput = prettyOrderID.replace(/\s/g, '');
     const match = trimmedInput.match(/\d+/);
-    return match ? match[0] : "";
+    return match ? match[0] : '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setPrettyOrderIDError("");
-    setPhoneError("");
+    setPrettyOrderIDError('');
+    setPhoneError('');
 
     // Validate the shipment number
     if (!shipmentNumberRegex.test(prettyOrderID)) {
       setPrettyOrderIDError(
-        "Please enter a valid shipment number (e.g., RGO-123)"
+        'Please enter a valid shipment number (e.g., RGO-123)'
       );
       return;
     }
 
     // Validate the phone number
     if (!phoneNumberRegex.test(phone)) {
-      setPhoneError("Please enter a valid 10-digit phone number");
+      setPhoneError('Please enter a valid 10-digit phone number');
       return;
     }
 
@@ -57,15 +66,17 @@ function Form() {
         prettyOrderID: orderNumber,
         phone,
       };
-      setInitialOrderID(prettyOrderID);
-      setInitialPhone(phone);
+
+      // Save data to local storage
+      localStorage.setItem('prettyOrderID', prettyOrderID);
+      localStorage.setItem('phone', phone);
 
       const response = await fetch(
-        "https://rodhisync.rangaoffice.com/api/v1/orders/thirdPartyAPI",
+        'https://rodhisync.rangaoffice.com/api/v1/orders/thirdPartyAPI',
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestData),
         }
@@ -75,21 +86,21 @@ function Form() {
         const jsonResponse = await response.json();
         if (jsonResponse && jsonResponse.data) {
           setResponseData(jsonResponse);
-          setError("");
+          setError('');
           const subOrderIndex = getSubOrderIndex(prettyOrderID);
-          navigate("/orderdetail", {
+          navigate('/orderdetail', {
             replace: false,
-            state: { data: jsonResponse.data, subOrderIndex, initialOrderID },
+            state: { data: jsonResponse.data, subOrderIndex },
           });
         } else {
-          setError("Invalid order ID or phone number");
+          setError('Invalid order ID or phone number');
           setResponseData(null);
         }
       } else {
-        throw new Error("Request failed");
+        throw new Error('Request failed');
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
       setError(
         "Uh-oh! Something went wrong. It seems there's an error with your shipment or registered mobile number."
       );
@@ -127,10 +138,7 @@ function Form() {
               value={prettyOrderID}
               placeholder="Shipment Number (Eg: RGO-123)"
               autoComplete="off"
-              onChange={(e) => {
-                setPrettyOrderID(e.target.value);
-                setInitialOrderID(e.target.value);
-              }}
+              onChange={(e) => setPrettyOrderID(e.target.value)}
               className="w-11/12 md:w-7/12 px-4 py-2 mb-7 border border-gray-300 rounded-md"
               required
             />
@@ -163,10 +171,10 @@ function Form() {
         <div className="response-container">
           {error && (
             <div
-              class="mb-8 mx-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
+              className="mb-8 mx-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
               role="alert"
             >
-              <span class="block sm:inline">{error}</span>
+              <span className="block sm:inline">{error}</span>
             </div>
           )}
           {responseData && !error && <OrderTable data={responseData} />}
@@ -177,7 +185,7 @@ function Form() {
         <div className="flex flex-col mx-auto text-center">
           <h3 className="text-rodhi-red text-xl">Need Help?</h3>
           <p>
-            Call us at:{" "}
+            Call us at:{' '}
             <a
               className="text-rodhi-blue hover:text-rodhi-red"
               href="tel:+9779801359733"

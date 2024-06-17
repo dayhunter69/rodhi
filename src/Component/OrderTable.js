@@ -1,18 +1,17 @@
-import React from "react";
-import Navbar from "./Navbar";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import Footer from "./Footer";
-import ReactGA from "react-ga4";
+import React from 'react';
+import Navbar from './Navbar';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import Footer from './Footer';
+import ReactGA from 'react-ga4';
 function OrderTable() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleViewMore = (item) => {
-    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
-    navigate("/status", {
+    ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
+    navigate('/status', {
       replace: false,
       state: { data: item, initialOrderID: location.state.initialOrderID },
     });
@@ -46,7 +45,7 @@ function OrderTable() {
 
   // Get the order items from the response data
   const orderItems = Object.values(responseData).filter(
-    (item) => typeof item === "object" && item.hasOwnProperty("orderArrayID")
+    (item) => typeof item === 'object' && item.hasOwnProperty('orderArrayID')
   );
 
   // Render all order items if subOrderIndex is null
@@ -54,7 +53,35 @@ function OrderTable() {
     subOrderIndex === null
       ? orderItems
       : orderItems.filter((item, index) => index === subOrderIndex);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (isNaN(date)) {
+      return 'Pending';
+    }
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+  const convertCamelCaseToNormalCase = (camelCaseString) => {
+    // Add a space before each uppercase letter and capitalize the first letter
+    return camelCaseString
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str) => str.toUpperCase());
+  };
 
+  let printShipment;
+  console.log(firstObject.shipmentMethod);
+  if (firstObject.shipmentMethod === 'Air') {
+    printShipment = true;
+  } else {
+    printShipment = false;
+  }
+
+  const navigateHome = () => {
+    navigate('/');
+  };
   return (
     <div className="w-full mt-[80px]">
       <Navbar />
@@ -64,11 +91,13 @@ function OrderTable() {
         onClick={() => window.history.back()}
       />
       <h1 className="text-rodhi-red text-[2rem] font-semibold text-center w-full mx-auto">
-        Shipment Detail
+        Shipment Details
       </h1>
-      <h2 className="text-rodhi-red text-[1.5rem] font-semibold text-center w-full mx-auto">
-        Shipment Number: {location.state.initialOrderID}
-      </h2>
+      {printShipment && (
+        <h2 className="text-rodhi-red text-[1.5rem] font-semibold text-center w-full mx-auto">
+          Shipment Number: {localStorage.getItem('prettyOrderID')}
+        </h2>
+      )}
       <main className="p-5 h-min" id="customers_table">
         <section className="w-full rounded-lg shadow p-3">
           <div className="p-3">
@@ -94,12 +123,12 @@ function OrderTable() {
                 <p className="text-lg m-1">
                   <a
                     className="text-rodhi-blue hover:text-rodhi-red"
-                    href={"tel:" + firstObject.assignedToPhone}
+                    href={'tel:' + firstObject.assignedToPhone}
                   >
                     {firstObject.assignedToPhone}
                   </a>
                   <a
-                    href={"https://wa.me/" + firstObject.assignedToPhone}
+                    href={'https://wa.me/' + firstObject.assignedToPhone}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -146,14 +175,10 @@ function OrderTable() {
                         {item.quantity}
                       </td>
                       <td className="p-3 text-sm text-gray-900 whitespace-nowrap">
-                        {item.status}
+                        {convertCamelCaseToNormalCase(item.status)}
                       </td>
                       <td className="p-3 text-sm text-gray-900 whitespace-nowrap">
-                        {new Date(item.lastUpdatedAt).toLocaleString("en-US", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
+                        {formatDate(item.lastUpdatedAt)}
                       </td>
                       <td className="p-3 text-sm text-gray-900 whitespace-nowrap">
                         <button
@@ -171,13 +196,16 @@ function OrderTable() {
           </div>
         </section>
       </main>
-      <Link to={"/"}>
-        <div className="flex justify-center mt-8">
-          <button className="bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded">
-            Back to Homepage
-          </button>
-        </div>
-      </Link>
+
+      <div className="flex justify-center mt-8 sm:mb-[135px]">
+        <button
+          className="w-[13rem] bg-rodhi-red hover:bg-rodhi-blue text-white font-bold py-2 px-4 rounded"
+          onClick={navigateHome}
+        >
+          Back to Homepage
+        </button>
+      </div>
+
       <Footer />
     </div>
   );

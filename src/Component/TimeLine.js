@@ -306,7 +306,7 @@ const TimeLine = () => {
         onClick={() => window.history.back()}
       />
       <h2 className="text-rodhi-red text-[1.5rem] font-semibold text-center w-full mx-auto">
-        Shipment Number: {location.state.initialOrderID}
+        Shipment Number: {localStorage.getItem('prettyOrderID')}
       </h2>
       <div className="px-4 py-4 rounded-2xl bg-gray-100 shadow-md flex-grow-1 basis-1/3">
         <h2 className="text-2xl font-bold">Product Details:</h2>
